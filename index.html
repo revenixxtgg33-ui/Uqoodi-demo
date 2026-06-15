@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عقودي — Uqoodi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0A0A;
+    --panel: #141414;
+    --panel-2: #1B1B1B;
+    --gold: #E8C766;
+    --gold-soft: rgba(232,199,102,0.12);
+    --text: #F5F3EE;
+    --muted: #8A8884;
+    --border: #2A2A28;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html,body{ height:100%; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ambient glow */
+  body::before{
+    content:'';
+    position:fixed;
+    top:-20%;
+    right:50%;
+    transform:translateX(50%);
+    width:900px;
+    height:900px;
+    background: radial-gradient(circle, rgba(232,199,102,0.07) 0%, transparent 65%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  [dir="ltr"] body{
+    font-family: 'Inter', 'Space Grotesk', sans-serif;
+  }
+
+  /* ===== HEADER ===== */
+  header{
+    position: relative;
+    z-index: 2;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 24px 28px;
+    max-width: 1100px;
+    width:100%;
+    margin: 0 auto;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .logo{
+    width:34px;
+    height:34px;
+    flex-shrink:0;
+    object-fit: contain;
+  }
+
+  .brand-name{
+    font-family: 'Space Grotesk', 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+  }
+
+  .lang-switch{
+    display:flex;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow:hidden;
+    background: var(--panel);
+  }
+
+  .lang-switch button{
+    background:none;
+    border:none;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 18px;
+    cursor:pointer;
+    transition: color .2s, background .2s;
+  }
+
+  .lang-switch button.active{
+    background: var(--gold);
+    color: #1A1404;
+  }
+
+  .lang-switch button:not(.active):hover{
+    color: var(--text);
+  }
+
+  /* ===== MAIN / HERO ===== */
+  main{
+    flex:1;
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 20px 20px 60px;
+  }
+
+  .hero-text{
+    text-align:center;
+    max-width: 640px;
+    margin: 12px auto 32px;
+  }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-soft);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+
+  [dir="rtl"] .eyebrow{ letter-spacing: 0.02em; text-transform:none; }
+
+  .eyebrow .dot{
+    width:6px; height:6px;
+    background: var(--gold);
+    border-radius:50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse{
+    0%,100%{ opacity:1; }
+    50%{ opacity:0.35; }
+  }
+
+  h1{
+    font-family: 'Space Grotesk', 'IBM Plex Sans Arabic', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.2;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  [dir="rtl"] h1{ font-family:'IBM Plex Sans Arabic', sans-serif; letter-spacing:0; }
+
+  h1 .accent{ color: var(--gold); }
+
+  .subtitle{
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ===== CHAT WIDGET ===== */
+  .chat-shell{
+    width: 100%;
+    max-width: 560px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    position: relative;
+    /* angular signature corners echoing the logo */
+    clip-path: polygon(0 18px, 18px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px));
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.7), 0 0 0 1px rgba(232,199,102,0.04);
+  }
+
+  .chat-header{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+
+  .chat-header .status-dot{
+    width:8px; height:8px;
+    background: #4ADE80;
+    border-radius:50%;
+    box-shadow: 0 0 0 4px rgba(74,222,128,0.15);
+  }
+
+  .chat-header .chat-title{
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .chat-header .chat-sub{
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .chat-body{
+    flex:1;
+    min-height: 320px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 20px;
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-body::-webkit-scrollbar{ width:6px; }
+  .chat-body::-webkit-scrollbar-thumb{ background: var(--border); border-radius:99px; }
+
+  .msg{
+    display:flex;
+    max-width: 88%;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    animation: rise .35s ease;
+  }
+
+  @keyframes rise{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .msg.bot{
+    align-self: flex-start;
+  }
+  [dir="rtl"] .msg.bot{ align-self: flex-end; }
+
+  .msg.user{
+    align-self: flex-end;
+    margin-inline-start: auto;
+  }
+  [dir="rtl"] .msg.user{ align-self: flex-start; margin-inline-start: 0; margin-inline-end: auto; }
+
+  .bubble{
+    padding: 11px 15px;
+    white-space: pre-wrap;
+  }
+
+  .msg.bot .bubble{
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+  }
+  [dir="rtl"] .msg.bot .bubble{
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  }
+
+  .msg.user .bubble{
+    background: var(--gold-soft);
+    border: 1px solid rgba(232,199,102,0.25);
+    color: var(--text);
+    clip-path: polygon(0 0, 100% 0, 100% 10px, 100% 100%, 0 100%);
+  }
+  [dir="rtl"] .msg.user .bubble{
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+  }
+
+  .typing{
+    display:flex;
+    gap:4px;
+    padding: 12px 15px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+  }
+  [dir="rtl"] .typing{ align-self:flex-end; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); }
+
+  .typing span{
+    width:6px; height:6px;
+    background: var(--muted);
+    border-radius:50%;
+    animation: bounce 1.2s infinite;
+  }
+  .typing span:nth-child(2){ animation-delay: .15s; }
+  .typing span:nth-child(3){ animation-delay: .3s; }
+
+  @keyframes bounce{
+    0%,60%,100%{ transform: translateY(0); opacity:.4; }
+    30%{ transform: translateY(-4px); opacity:1; }
+  }
+
+  .chat-input-row{
+    display:flex;
+    gap:10px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+
+  .chat-input-row input{
+    flex:1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.92rem;
+    padding: 12px 16px;
+    border-radius: 10px;
+    outline:none;
+    transition: border-color .2s;
+  }
+
+  .chat-input-row input:focus{
+    border-color: var(--gold);
+  }
+
+  .chat-input-row input::placeholder{ color: var(--muted); }
+
+  .send-btn{
+    background: var(--gold);
+    border:none;
+    color: #1A1404;
+    font-weight:700;
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 12px 22px;
+    border-radius: 10px;
+    cursor:pointer;
+    transition: filter .2s, transform .15s;
+    white-space:nowrap;
+  }
+
+  .send-btn:hover{ filter: brightness(1.08); }
+  .send-btn:active{ transform: scale(0.97); }
+  .send-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .limit-note{
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align:center;
+    padding: 10px 16px 0;
+  }
+
+  /* ===== WAITLIST ===== */
+  .waitlist{
+    width:100%;
+    max-width: 560px;
+    margin-top: 36px;
+    text-align:center;
+  }
+
+  .waitlist h2{
+    font-family: 'Space Grotesk', 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  [dir="rtl"] .waitlist h2{ font-family:'IBM Plex Sans Arabic', sans-serif; }
+
+  .waitlist p{
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin-bottom: 20px;
+  }
+
+  .waitlist-form{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content:center;
+  }
+
+  .waitlist-form input{
+    flex: 1 1 260px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 14px 18px;
+    border-radius: 10px;
+    outline:none;
+    transition: border-color .2s;
+  }
+
+  .waitlist-form input:focus{ border-color: var(--gold); }
+  .waitlist-form input::placeholder{ color: var(--muted); }
+
+  .waitlist-form button{
+    background: var(--gold);
+    border:none;
+    color: #1A1404;
+    font-weight:700;
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 14px 28px;
+    border-radius: 10px;
+    cursor:pointer;
+    transition: filter .2s, transform .15s;
+  }
+
+  .waitlist-form button:hover{ filter: brightness(1.08); }
+  .waitlist-form button:active{ transform: scale(0.97); }
+
+  .waitlist-status{
+    margin-top: 14px;
+    font-size: 0.88rem;
+    min-height: 1.4em;
+  }
+
+  .waitlist-status.success{ color: #6CC97A; }
+  .waitlist-status.error{ color: #E07A6F; }
+
+  /* ===== FOOTER ===== */
+  footer{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  footer .gold{ color: var(--gold); }
+
+  @media (max-width: 480px){
+    header{ padding: 18px 16px; }
+    .brand-name{ font-size: 1rem; }
+    .chat-body{ min-height: 280px; max-height: 360px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img class="logo" src="data:image/png;base64,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" alt="Uqoodi logo" />
+    <span class="brand-name" id="brandName">عقودي</span>
+  </div>
+  <div class="lang-switch">
+    <button id="btnAr" class="active" onclick="setLang('ar')">عربي</button>
+    <button id="btnEn" onclick="setLang('en')">English</button>
+  </div>
+</header>
+
+<main>
+  <div class="hero-text">
+    <span class="eyebrow"><span class="dot"></span><span id="eyebrowText">قريباً — جرّب المعاينة الآن</span></span>
+    <h1 id="heroTitle">عقود وعروض أسعار <span class="accent">احترافية</span> في ثوانٍ</h1>
+    <p class="subtitle" id="heroSub">جرّب عقودي الآن — اكتب وصفاً بسيطاً لمشروعك واحصل على معاينة فورية لعقد أو عرض سعر مصاغ بذكاء اصطناعي.</p>
+  </div>
+
+  <div class="chat-shell">
+    <div class="chat-header">
+      <span class="status-dot"></span>
+      <div>
+        <div class="chat-title" id="chatTitle">مساعد عقودي</div>
+        <div class="chat-sub" id="chatSub">معاينة تجريبية محدودة</div>
+      </div>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="اكتب وصف عملك… مثال: عقد تصميم شعار لعميل في الرياض" />
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">إرسال</button>
+    </div>
+    <div class="limit-note" id="limitNote">معاينة محدودة — النسخة الكاملة قريباً</div>
+  </div>
+
+  <div class="waitlist">
+    <h2 id="waitlistTitle">كن أول من يجرّب النسخة الكاملة</h2>
+    <p id="waitlistSub">سجّل بريدك الإلكتروني وسنخبرك فور الإطلاق، مع عرض خاص للمسجلين الأوائل.</p>
+    <form class="waitlist-form" onsubmit="joinWaitlist(event)">
+      <input type="email" id="emailInput" placeholder="بريدك الإلكتروني" required />
+      <button type="submit" id="waitlistBtn">انضم لقائمة الانتظار</button>
+    </form>
+    <div class="waitlist-status" id="waitlistStatus"></div>
+  </div>
+</main>
+
+<footer>
+  <span id="footerText">عقودي — منصة عقود وعروض أسعار بالذكاء الاصطناعي لأصحاب الأعمال في الخليج</span>
+</footer>
+
+<script>
+  // ===================== TRANSLATIONS =====================
+  const translations = {
+    ar: {
+      dir: 'rtl',
+      brandName: 'عقودي',
+      langBtnAr: 'عربي', langBtnEn: 'English',
+      eyebrow: 'قريباً — جرّب المعاينة الآن',
+      heroTitle: 'عقود وعروض أسعار <span class="accent">احترافية</span> في ثوانٍ',
+      heroSub: 'جرّب عقودي الآن — اكتب وصفاً بسيطاً لمشروعك واحصل على معاينة فورية لعقد أو عرض سعر مصاغ بذكاء اصطناعي.',
+      chatTitle: 'مساعد عقودي',
+      chatSub: 'معاينة تجريبية محدودة',
+      inputPlaceholder: 'اكتب وصف عملك… مثال: عقد تصميم شعار لعميل في الرياض',
+      sendBtn: 'إرسال',
+      limitNote: 'معاينة محدودة — النسخة الكاملة قريباً',
+      welcomeMsg: 'أهلاً! أنا مساعد عقودي. اكتب وصفاً مختصراً للخدمة أو المشروع الذي تريد إنشاء عقد أو عرض سعر له، وسأعطيك معاينة فورية.',
+      waitlistTitle: 'كن أول من يجرّب النسخة الكاملة',
+      waitlistSub: 'سجّل بريدك الإلكتروني وسنخبرك فور الإطلاق، مع عرض خاص للمسجلين الأوائل.',
+      emailPlaceholder: 'بريدك الإلكتروني',
+      waitlistBtn: 'انضم لقائمة الانتظار',
+      waitlistSuccess: 'تم التسجيل بنجاح! سنراسلك عند الإطلاق 🎉',
+      waitlistError: 'حدث خطأ، حاول مرة أخرى.',
+      waitlistInvalid: 'يرجى إدخال بريد إلكتروني صحيح.',
+      footer: 'عقودي — منصة عقود وعروض أسعار بالذكاء الاصطناعي لأصحاب الأعمال في الخليج',
+      typingError: 'حدث خطأ مؤقت، حاول مرة أخرى.',
+      previewSuffix: '\n\n— هذه معاينة مختصرة فقط. النسخة الكاملة تشمل عقداً قانونياً كاملاً قابلاً للتحميل بصيغة PDF.',
+      limitReached: 'لقد استخدمت عدد المعاينات المجانية لهذا اليوم (3 معاينات). سجّل بريدك أدناه لتجربة النسخة الكاملة عند الإطلاق، أو عُد غداً لمعاينات جديدة.',
+      remainingMsgs: (n) => `معاينة تجريبية محدودة — متبقّي ${n} من 3 اليوم`,
+      noRemainingMsgs: 'معاينة تجريبية محدودة — انتهت معايناتك اليوم'
+    },
+    en: {
+      dir: 'ltr',
+      brandName: 'Uqoodi',
+      langBtnAr: 'العربية', langBtnEn: 'English',
+      eyebrow: 'Coming soon — try the live preview',
+      heroTitle: 'Professional contracts & quotes in <span class="accent">seconds</span>',
+      heroSub: 'Try Uqoodi now — describe your project in a sentence and get an instant AI-generated contract or quote preview.',
+      chatTitle: 'Uqoodi Assistant',
+      chatSub: 'Limited live demo',
+      inputPlaceholder: 'Describe your project… e.g. logo design contract for a client in Riyadh',
+      sendBtn: 'Send',
+      limitNote: 'Limited preview — full version coming soon',
+      welcomeMsg: "Hi! I'm the Uqoodi assistant. Describe the service or project you need a contract or quote for, and I'll give you an instant preview.",
+      waitlistTitle: 'Be first to try the full version',
+      waitlistSub: "Leave your email and we'll notify you at launch, with an early-access offer.",
+      emailPlaceholder: 'Your email address',
+      waitlistBtn: 'Join the waitlist',
+      waitlistSuccess: "You're on the list! We'll email you at launch 🎉",
+      waitlistError: 'Something went wrong, please try again.',
+      waitlistInvalid: 'Please enter a valid email address.',
+      footer: 'Uqoodi — AI-powered contracts & quotes for businesses across the Gulf',
+      typingError: 'Something went wrong, please try again.',
+      previewSuffix: '\n\n— This is a short preview only. The full version includes a complete legal contract you can download as PDF.',
+      limitReached: "You've used your free previews for today (3 previews). Leave your email below to get access at launch, or come back tomorrow for more.",
+      remainingMsgs: (n) => `Limited live demo — ${n} of 3 previews left today`,
+      noRemainingMsgs: "Limited live demo — you've used today's previews"
+    }
+  };
+
+  let currentLang = 'ar';
+
+  function setLang(lang){
+    currentLang = lang;
+    const t = translations[lang];
+    const html = document.getElementById('htmlRoot');
+    html.lang = lang;
+    html.dir = t.dir;
+
+    document.getElementById('brandName').textContent = t.brandName;
+    document.getElementById('btnAr').textContent = translations.ar.langBtnAr === t.langBtnAr ? 'عربي' : 'عربي';
+    document.getElementById('btnAr').classList.toggle('active', lang === 'ar');
+    document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+    document.getElementById('eyebrowText').textContent = t.eyebrow;
+    document.getElementById('heroTitle').innerHTML = t.heroTitle;
+    document.getElementById('heroSub').textContent = t.heroSub;
+    document.getElementById('chatTitle').textContent = t.chatTitle;
+    updateChatSub();
+    document.getElementById('chatInput').placeholder = t.inputPlaceholder;
+    document.getElementById('sendBtn').textContent = t.sendBtn;
+    document.getElementById('limitNote').textContent = t.limitNote;
+    document.getElementById('waitlistTitle').textContent = t.waitlistTitle;
+    document.getElementById('waitlistSub').textContent = t.waitlistSub;
+    document.getElementById('emailInput').placeholder = t.emailPlaceholder;
+    document.getElementById('waitlistBtn').textContent = t.waitlistBtn;
+    document.getElementById('footerText').textContent = t.footer;
+
+    // Reset chat with welcome message in new language
+    const chatBody = document.getElementById('chatBody');
+    chatBody.innerHTML = '';
+    if(messageCount >= MAX_MESSAGES){
+      addMessage('bot', t.limitReached);
+    } else {
+      addMessage('bot', t.welcomeMsg);
+    }
+    applyInputLockState();
+
+    // Clear waitlist status
+    const status = document.getElementById('waitlistStatus');
+    status.textContent = '';
+    status.className = 'waitlist-status';
+  }
+
+  // ===================== CHAT LOGIC =====================
+  const MAX_MESSAGES = 3; // limit free preview turns per day
+  const STORAGE_KEY = 'uqoodi_chat_usage';
+
+  function getUsage(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return { count: 0, date: todayStr() };
+      const data = JSON.parse(raw);
+      if(data.date !== todayStr()){
+        return { count: 0, date: todayStr() }; // reset on new day
+      }
+      return data;
+    } catch(e){
+      return { count: 0, date: todayStr() };
+    }
+  }
+
+  function saveUsage(usage){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(usage));
+    } catch(e){ /* ignore */ }
+  }
+
+  function todayStr(){
+    return new Date().toISOString().slice(0,10);
+  }
+
+  let usage = getUsage();
+  let messageCount = usage.count;
+
+  function updateChatSub(){
+    const t = translations[currentLang];
+    const remaining = MAX_MESSAGES - messageCount;
+    document.getElementById('chatSub').textContent = remaining > 0
+      ? t.remainingMsgs(remaining)
+      : t.noRemainingMsgs;
+  }
+
+  function applyInputLockState(){
+    const input = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    if(messageCount >= MAX_MESSAGES){
+      input.disabled = true;
+      sendBtn.disabled = true;
+    } else {
+      input.disabled = false;
+      sendBtn.disabled = false;
+    }
+  }
+
+  function addMessage(role, text){
+    const chatBody = document.getElementById('chatBody');
+    const msg = document.createElement('div');
+    msg.className = 'msg ' + role;
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    msg.appendChild(bubble);
+    chatBody.appendChild(msg);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    return msg;
+  }
+
+  function showTyping(){
+    const chatBody = document.getElementById('chatBody');
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.id = 'typingIndicator';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    chatBody.appendChild(typing);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  function hideTyping(){
+    const el = document.getElementById('typingIndicator');
+    if(el) el.remove();
+  }
+
+  async function sendMessage(){
+    const input = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const text = input.value.trim();
+    if(!text) return;
+
+    const t = translations[currentLang];
+
+    if(messageCount >= MAX_MESSAGES){
+      applyInputLockState();
+      return;
+    }
+
+    addMessage('user', text);
+    input.value = '';
+    input.disabled = true;
+    sendBtn.disabled = true;
+    showTyping();
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: text,
+          lang: currentLang
+        })
+      });
+
+      const data = await response.json();
+      hideTyping();
+
+      let reply = data.reply ? data.reply.trim() : t.typingError;
+
+      messageCount++;
+      usage = { count: messageCount, date: todayStr() };
+      saveUsage(usage);
+      updateChatSub();
+
+      if(messageCount >= MAX_MESSAGES){
+        reply += t.previewSuffix + '\n\n' + t.limitReached;
+      }
+
+      addMessage('bot', reply);
+    } catch(err){
+      hideTyping();
+      addMessage('bot', t.typingError);
+    } finally {
+      applyInputLockState();
+      if(!input.disabled) input.focus();
+    }
+  }
+
+  document.getElementById('chatInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') sendMessage();
+  });
+
+  // ===================== WAITLIST LOGIC =====================
+  async function joinWaitlist(e){
+    e.preventDefault();
+    const t = translations[currentLang];
+    const emailInput = document.getElementById('emailInput');
+    const status = document.getElementById('waitlistStatus');
+    const email = emailInput.value.trim();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRegex.test(email)){
+      status.textContent = t.waitlistInvalid;
+      status.className = 'waitlist-status error';
+      return;
+    }
+
+    status.textContent = '...';
+    status.className = 'waitlist-status';
+
+    try {
+      // Replace with your Supabase project URL and anon key
+      const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+      const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ email: email, lang: currentLang })
+      });
+
+      if(res.ok || res.status === 201){
+        status.textContent = t.waitlistSuccess;
+        status.className = 'waitlist-status success';
+        emailInput.value = '';
+      } else {
+        throw new Error('Request failed');
+      }
+    } catch(err){
+      status.textContent = t.waitlistError;
+      status.className = 'waitlist-status error';
+    }
+  }
+
+  // ===================== INIT =====================
+  setLang('ar');
+</script>
+
+</body>
+</html>
