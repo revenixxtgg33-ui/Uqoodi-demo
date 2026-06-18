@@ -1,6 +1,4 @@
-// Vercel Serverless Function — Uqoodi AI
-// Set GROQ_API_KEY in Vercel Environment Variables
-
+// ملف api/chat.js الخاص بـ uqoodi-demo (نسخة القوة)
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -10,152 +8,129 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  try {
+    const body =
+      typeof req.body === "string"
+        ? JSON.parse(req.body)
+        : req.body;
 
-  const { message = '', lang } = req.body || {};
+    const message = body?.message?.trim() || "";
 
-  if (!message || typeof message !== 'string') {
-    return res.status(400).json({ error: 'Missing message field' });
-  }
+    if (!message) {
+      return res.status(400).json({ reply: "يرجى كتابة رسالة أولاً." });
+    }
 
-  // Prevent abuse
-  if (message.length > 500) {
-    return res.status(200).json({
-      reply:
-        lang === 'en'
-          ? 'Please keep your request under 500 characters.'
-          : 'يرجى أن يكون الطلب أقل من 500 حرف.'
-    });
-  }
+    // ---- استخدام نفس الـ System Prompt القوي من الموقع الأساسي ----
+    const systemPrompt = `
+You are Uqoodi AI.
 
-  // Block unrelated topics
-  const blockedWords = [
-    'hack',
-    'hacking',
-    'exploit',
-    'virus',
-    'malware',
-    'password',
-    'crypto',
-    'bitcoin',
-    'programming',
-    'coding',
-    'اختراق',
-    'تهكير',
-    'فيروس',
-    'برمجة',
-    'كود',
-    'بيتكوين'
-  ];
+You are a senior business contracts consultant specialized in Arabic and GCC markets.
 
-  if (
-    blockedWords.some(word =>
-      message.toLowerCase().includes(word.toLowerCase())
-    )
-  ) {
-    return res.status(200).json({
-      reply:
-        lang === 'en'
-          ? 'Uqoodi AI only assists with contracts, quotations, proposals and business documents.'
-          : 'عقودي AI متخصص فقط في العقود وعروض الأسعار والمقترحات والمستندات التجارية.'
-    });
-  }
-
-  const systemPrompt = `
-You are Uqoodi AI, the professional assistant of Uqoodi.
-
-MISSION:
-Help users create and understand:
+IDENTITY:
+You are not a generic AI chatbot.
+You are an expert in:
 - Contracts
 - Quotations
-- Business proposals
-- Service agreements
+- Commercial proposals
+- Freelance agreements
 - Employment contracts
-- Freelance contracts
-- Commercial documents
+- Partnership agreements
+- Business documentation
 
 LANGUAGE:
-- Detect user language automatically.
-- Reply in Arabic if user writes Arabic.
-- Reply in English if user writes English.
+- Always reply in the same language as the user.
+- If the user writes Arabic, reply in professional Arabic.
+- If the user writes English, reply in English.
+- Never mix languages unless requested.
+
+DOCUMENT CREATION WORKFLOW:
+
+When a user asks for a contract, quotation, proposal, agreement or business document:
+
+1. Identify the document type.
+2. Ask only the essential missing questions.
+3. Do not overwhelm the user with too many questions.
+4. Gather enough information.
+5. Generate the complete document professionally.
+6. If minor information is missing, make reasonable assumptions and clearly mention them.
+
+DOCUMENT STANDARDS:
+
+Every generated document should include when applicable:
+- Title
+- Parties
+- Introduction
+- Scope of Work
+- Duration
+- Payment Terms
+- Obligations
+- Confidentiality
+- Intellectual Property
+- Termination
+- Dispute Resolution
+- Signatures
+
+CONSULTING MODE:
+
+When users ask business questions:
+- Give practical advice.
+- Identify risks.
+- Suggest improvements.
+- Provide actionable recommendations.
+
+CONTRACT REVIEW MODE:
+
+If a user provides an existing contract:
+- Summarize it.
+- Identify risks.
+- Detect missing clauses.
+- Suggest improvements.
 
 STYLE:
 - Professional
-- Friendly
-- Gulf-business oriented
-- Clear and concise
-- Maximum 120 words
+- Clear
+- Structured
+- Helpful
+- Business-focused
 
-RULES:
-- Stay focused on business, contracts, quotations and commercial documents.
-- Do not answer unrelated questions.
-- If the request is unrelated, politely explain that Uqoodi specializes in contracts and quotations.
-- Do not generate full contracts.
-- Generate only a professional preview.
-- Mention key clauses when relevant.
-- Ask one useful follow-up question when additional information is needed.
+Never give shallow one-line answers.
+Always provide useful, professional guidance.
+    `;
 
-EXAMPLE:
-If someone says:
-"I need a quotation for website development"
-
-Respond with:
-A professional quotation preview including scope, timeline, pricing structure and key terms, then ask one relevant follow-up question.
-`;
-
-  try {
-    const groqRes = await fetch(
-      'https://api.groq.com/openai/v1/chat/completions',
+    // ---- الاتصال بـ Groq ----
+    const groqResponse = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
+          model: "llama-3.3-70b-versatile",
+          temperature: 0.4,
+          max_tokens: 2048, // رفعنا الحد الأقصى للكلمات ليولد رداً كاملاً
           messages: [
-            {
-              role: 'system',
-              content: systemPrompt
-            },
-            {
-              role: 'user',
-              content: message
-            }
-          ],
-          temperature: 0.6,
-          max_tokens: 250
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message }
+          ]
         })
       }
     );
 
-    if (!groqRes.ok) {
-      const errorText = await groqRes.text();
+    const data = await groqResponse.json();
 
-      console.error('Groq Error:', errorText);
-
-      return res.status(502).json({
-        error: 'AI service unavailable'
+    if (!groqResponse.ok) {
+      return res.status(500).json({
+        reply: data?.error?.message || "حدث خطأ أثناء التواصل مع الذكاء الاصطناعي."
       });
     }
 
-    const data = await groqRes.json();
-
-    const reply =
-      data?.choices?.[0]?.message?.content?.trim() ||
-      (lang === 'en'
-        ? 'Unable to generate a response.'
-        : 'تعذر إنشاء الرد.');
-
+    const reply = data?.choices?.[0]?.message?.content || "تعذر إنشاء رد في الوقت الحالي.";
     return res.status(200).json({ reply });
-  } catch (error) {
-    console.error('Chat Error:', error);
 
-    return res.status(500).json({
-      error: 'Internal server error'
-    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ reply: "حدث خطأ غير متوقع. حاول مرة أخرى." });
   }
-        }
+}
